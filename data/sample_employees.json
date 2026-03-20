@@ -1,0 +1,152 @@
+[
+  {
+    "id": "EMP001",
+    "name": "Aanya Sharma",
+    "title": "Data Analyst",
+    "department": "Analytics",
+    "experience_years": 5,
+    "skills": ["Python", "SQL", "Tableau", "Excel", "Statistics", "pandas", "numpy"],
+    "certifications": ["Google Data Analytics", "AWS Cloud Practitioner"],
+    "education": "B.Tech Computer Science"
+  },
+  {
+    "id": "EMP002",
+    "name": "Rohan Mehta",
+    "title": "Backend Engineer",
+    "department": "Engineering",
+    "experience_years": 7,
+    "skills": ["Python", "Django", "PostgreSQL", "Redis", "Docker", "Kubernetes", "REST APIs", "Git"],
+    "certifications": ["AWS Solutions Architect", "PostgreSQL Certified"],
+    "education": "B.E. Information Technology"
+  },
+  {
+    "id": "EMP003",
+    "name": "Priya Nair",
+    "title": "Product Manager",
+    "department": "Product",
+    "experience_years": 6,
+    "skills": ["Agile", "Scrum", "JIRA", "Roadmapping", "Stakeholder Management", "A/B Testing", "SQL", "Figma"],
+    "certifications": ["Certified Scrum Master", "Google PM Certificate"],
+    "education": "MBA Product Management"
+  },
+  {
+    "id": "EMP004",
+    "name": "Arjun Patel",
+    "title": "Frontend Engineer",
+    "department": "Engineering",
+    "experience_years": 4,
+    "skills": ["JavaScript", "React", "TypeScript", "CSS", "HTML", "Redux", "GraphQL", "Webpack", "Jest"],
+    "certifications": ["Meta Frontend Developer", "AWS Cloud Practitioner"],
+    "education": "B.Tech Computer Science"
+  },
+  {
+    "id": "EMP005",
+    "name": "Sneha Gupta",
+    "title": "ML Engineer",
+    "department": "AI/ML",
+    "experience_years": 6,
+    "skills": ["Python", "TensorFlow", "PyTorch", "Scikit-learn", "pandas", "SQL", "Docker", "MLflow", "Spark"],
+    "certifications": ["TensorFlow Developer", "AWS ML Specialty"],
+    "education": "M.Tech AI"
+  },
+  {
+    "id": "EMP006",
+    "name": "Karan Singh",
+    "title": "DevOps Engineer",
+    "department": "Infrastructure",
+    "experience_years": 8,
+    "skills": ["Docker", "Kubernetes", "Terraform", "AWS", "CI/CD", "Jenkins", "Ansible", "Linux", "Bash", "Prometheus"],
+    "certifications": ["AWS DevOps Engineer", "CKA", "Terraform Associate"],
+    "education": "B.E. Computer Science"
+  },
+  {
+    "id": "EMP007",
+    "name": "Meera Reddy",
+    "title": "Data Engineer",
+    "department": "Engineering",
+    "experience_years": 3,
+    "skills": ["Python", "SQL", "Spark", "Airflow", "dbt", "BigQuery", "Snowflake", "ETL"],
+    "certifications": ["Google Cloud Professional Data Engineer"],
+    "education": "B.Tech IT"
+  },
+  {
+    "id": "EMP008",
+    "name": "Rahul Joshi",
+    "title": "Data Engineer",
+    "department": "Analytics",
+    "experience_years": 5,
+    "skills": ["Python", "SQL", "Spark", "Kafka", "Airflow", "dbt", "PostgreSQL", "Redis", "Docker"],
+    "certifications": ["AWS Data Analytics", "Databricks Associate"],
+    "education": "B.Tech Computer Science"
+  },
+  {
+    "id": "EMP009",
+    "name": "Anita Krishnan",
+    "title": "Business Analyst",
+    "department": "Strategy",
+    "experience_years": 4,
+    "skills": ["SQL", "Excel", "PowerBI", "Tableau", "Requirements Gathering", "Stakeholder Management", "Process Mapping"],
+    "certifications": ["PMP", "Tableau Desktop Specialist"],
+    "education": "B.Com + MBA"
+  },
+  {
+    "id": "EMP010",
+    "name": "Vikram Bose",
+    "title": "Software Engineer",
+    "department": "Engineering",
+    "experience_years": 6,
+    "skills": ["Java", "Spring Boot", "Microservices", "Docker", "Kubernetes", "PostgreSQL", "REST APIs", "RabbitMQ"],
+    "certifications": ["AWS Solutions Architect", "Oracle Java Certified"],
+    "education": "B.Tech Software Engineering"
+  },
+  {
+    "id": "EMP011",
+    "name": "Pooja Iyer",
+    "title": "Data Scientist",
+    "department": "AI/ML",
+    "experience_years": 4,
+    "skills": ["Python", "R", "Scikit-learn", "pandas", "SQL", "Tableau", "Statistics", "A/B Testing"],
+    "certifications": ["Google Data Analytics", "Databricks ML Associate"],
+    "education": "M.Sc. Statistics"
+  },
+  {
+    "id": "EMP012",
+    "name": "Nikhil Sharma",
+    "title": "Cloud Engineer",
+    "department": "Infrastructure",
+    "experience_years": 5,
+    "skills": ["AWS", "Azure", "GCP", "Terraform", "Docker", "Kubernetes", "Python", "Bash"],
+    "certifications": ["AWS Solutions Architect", "Azure Administrator", "GCP Associate"],
+    "education": "B.Tech Computer Science"
+  },
+  {
+    "id": "EMP013",
+    "name": "Divya Menon",
+    "title": "UX Designer",
+    "department": "Design",
+    "experience_years": 5,
+    "skills": ["Figma", "Adobe XD", "User Research", "Wireframing", "Prototyping", "CSS", "HTML", "A/B Testing"],
+    "certifications": ["Google UX Design", "HFI CUA"],
+    "education": "B.Des Interaction Design"
+  },
+  {
+    "id": "EMP014",
+    "name": "Saurabh Tiwari",
+    "title": "Data Analyst",
+    "department": "Analytics",
+    "experience_years": 2,
+    "skills": ["SQL", "Python", "Excel", "Tableau", "Statistics"],
+    "certifications": ["Google Data Analytics"],
+    "education": "B.Tech Computer Science"
+  },
+  {
+    "id": "EMP015",
+    "name": "Laleh Ahmadi",
+    "title": "Platform Engineer",
+    "department": "Engineering",
+    "experience_years": 9,
+    "skills": ["Python", "Spark", "Kafka", "Airflow", "dbt", "Kubernetes", "Docker", "Terraform", "AWS", "PostgreSQL"],
+    "certifications": ["AWS DevOps Engineer", "CKA", "Databricks Associate"],
+    "education": "M.Tech Distributed Systems"
+  }
+]

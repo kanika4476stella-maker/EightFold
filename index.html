@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TalentScope — Internal Talent Discovery Agent</title>
+  <meta name="description" content="AI-powered internal talent liquidity platform. Map your workforce skills, surface internal candidates, and generate upskilling roadmaps." />
+  <link rel="stylesheet" href="styles/global.css" />
+  <style>
+    /* ── Page-specific: Landing ── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column; justify-content: center;
+      padding: 80px 40px 60px;
+      max-width: 1200px; margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(99,102,241,0.12); border: 1px solid rgba(99,102,241,0.25);
+      border-radius: 99px; padding: 6px 14px;
+      font-size: 0.75rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--indigo-light); margin-bottom: 28px;
+    }
+    .hero-eyebrow .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--emerald); animation: pulse 2s ease infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.6;transform:scale(1.3)} }
+
+    .hero-title {
+      font-size: clamp(2.4rem, 5vw, 4.2rem);
+      font-weight: 900; line-height: 1.08; max-width: 780px; margin-bottom: 22px;
+      background: linear-gradient(135deg, #fff 0%, var(--indigo-light) 50%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .hero-sub {
+      font-size: 1.15rem; color: var(--text-secondary); max-width: 580px;
+      line-height: 1.75; margin-bottom: 48px;
+    }
+
+    /* ── Stats Strip ── */
+    .stats-strip {
+      display: flex; gap: 48px; flex-wrap: wrap;
+      padding: 28px 36px; margin-bottom: 60px;
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); backdrop-filter: blur(20px);
+      max-width: 680px;
+    }
+
+    /* ── Main Form Card ── */
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 28px;
+      max-width: 960px;
+    }
+    @media(max-width:720px){ .form-grid { grid-template-columns: 1fr; } }
+
+    .form-panel {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); padding: 32px;
+      backdrop-filter: blur(20px); display: flex; flex-direction: column; gap: 20px;
+    }
+
+    .panel-title {
+      font-size: 1rem; font-weight: 700; margin-bottom: 4px;
+      display: flex; align-items: center; gap: 10px;
+    }
+    .panel-icon {
+      width: 32px; height: 32px; border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 16px;
+    }
+    .panel-icon.indigo { background: rgba(99,102,241,0.18); }
+    .panel-icon.cyan   { background: rgba(34,211,238,0.12); }
+
+    .or-divider {
+      display: flex; align-items: center; gap: 12px;
+      font-size: 0.8rem; color: var(--text-muted);
+    }
+    .or-divider::before, .or-divider::after {
+      content:''; flex:1; height:1px; background: var(--border);
+    }
+
+    .preset-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+    .preset-btn {
+      padding: 6px 12px; border-radius: 8px; font-size: 0.78rem; font-weight: 500;
+      cursor: pointer; border: 1px solid var(--border);
+      background: rgba(255,255,255,0.04); color: var(--text-secondary);
+      transition: var(--transition);
+    }
+    .preset-btn:hover { border-color: var(--indigo); color: var(--indigo-light); background: rgba(99,102,241,0.08); }
+    .preset-btn.active { border-color: var(--indigo); color: var(--indigo-light); background: rgba(99,102,241,0.12); }
+
+    .analyze-bar {
+      max-width: 960px; margin-top: 28px;
+      display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+    }
+
+    .field-label {
+      font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase;
+      color: var(--text-secondary); margin-bottom: 8px;
+    }
+
+    .status-row {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    }
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 5px 12px; border-radius: 99px; font-size: 0.78rem; font-weight: 500;
+      background: rgba(16,185,129,0.1); color: var(--emerald); border: 1px solid rgba(16,185,129,0.2);
+    }
+    .status-chip.waiting {
+      background: rgba(148,163,184,0.08); color: var(--text-muted); border-color: var(--border);
+    }
+
+    /* ── How It Works ── */
+    .how-section {
+      max-width: 1200px; margin: 0 auto; padding: 80px 40px;
+    }
+    .how-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px; margin-top: 40px;
+    }
+    .how-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 28px; backdrop-filter: blur(20px);
+      transition: var(--transition);
+    }
+    .how-card:hover {
+      border-color: rgba(99,102,241,0.3); transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(99,102,241,0.12);
+    }
+    .how-num {
+      font-size: 0.72rem; font-weight: 700; color: var(--indigo-light);
+      letter-spacing: 0.1em; margin-bottom: 16px;
+    }
+    .how-icon { font-size: 2rem; margin-bottom: 12px; }
+    .how-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .how-desc  { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ── Error message ── */
+    .error-msg {
+      display: none; align-items: center; gap: 8px;
+      padding: 10px 16px; background: rgba(244,63,94,0.1);
+      border: 1px solid rgba(244,63,94,0.25); border-radius: var(--radius-md);
+      color: var(--rose); font-size: 0.85rem; max-width: 960px; margin-top: 12px;
+    }
+    .error-msg.show { display: flex; }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="page-content">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo-icon">🔭</div>
+        TalentScope
+      </a>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span class="navbar-badge">Internal Talent Agent</span>
+        <span class="badge badge-emerald">v1.0</span>
+      </div>
+    </nav>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-eyebrow">
+        <span class="dot"></span>
+        AI-Powered Workforce Discovery
+      </div>
+      <h1 class="hero-title">Unlock the Talent<br/>You Already Have</h1>
+      <p class="hero-sub">
+        Stop looking outside when your best candidates are already on payroll.
+        TalentScope maps your workforce skills, surfaces the closest internal matches
+        for any open role, and generates a concrete upskilling plan for each candidate.
+      </p>
+
+      <!-- Live stats -->
+      <div class="stats-strip" id="statsStrip">
+        <div class="stat-item">
+          <div class="stat-num" id="statEmployees">0</div>
+          <div class="stat-label">Employees Loaded</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statSkills">0</div>
+          <div class="stat-label">Unique Skills Mapped</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statJobs">3</div>
+          <div class="stat-label">Sample Job Presets</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" id="statTime">&lt;1s</div>
+          <div class="stat-label">Analysis Time</div>
+        </div>
+      </div>
+
+      <!-- ── Main Input Form ── -->
+      <div class="form-grid">
+
+        <!-- Panel 1: Employee Profiles -->
+        <div class="form-panel" id="employeePanel">
+          <div>
+            <div class="panel-title">
+              <div class="panel-icon indigo">👥</div>
+              Employee Profiles
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);">Upload a CSV or JSON file of your workforce</div>
+          </div>
+
+          <div>
+            <div class="field-label">Upload File</div>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="employeeFile" accept=".csv,.json" />
+              <div class="upload-icon">📋</div>
+              <div class="upload-title">Drag & drop your file here</div>
+              <div class="upload-hint">Supports .CSV and .JSON formats</div>
+              <div class="upload-filename" id="uploadFilename" style="display:none;"></div>
+            </div>
+          </div>
+
+          <div class="or-divider">or</div>
+
+          <div>
+            <div class="field-label">Load Demo Data</div>
+            <button class="btn btn-secondary" id="loadDemoBtn" style="width:100%;">
+              ✨ Load 15 Sample Employees
+            </button>
+          </div>
+
+          <div class="status-row" id="employeeStatus">
+            <span class="status-chip waiting" id="employeeChip">⏳ No file loaded</span>
+          </div>
+        </div>
+
+        <!-- Panel 2: Job Description -->
+        <div class="form-panel" id="jobPanel">
+          <div>
+            <div class="panel-title">
+              <div class="panel-icon cyan">💼</div>
+              Job Description
+            </div>
+            <div style="font-size:0.82rem;color:var(--text-secondary);">Choose a preset or paste your own JD</div>
+          </div>
+
+          <div>
+            <div class="field-label">Quick Presets</div>
+            <div class="preset-btns" id="presetBtns">
+              <button class="preset-btn" data-idx="0" id="preset0">Senior Data Engineer</button>
+              <button class="preset-btn" data-idx="1" id="preset1">Senior Product Manager</button>
+              <button class="preset-btn" data-idx="2" id="preset2">ML Platform Engineer</button>
+            </div>
+          </div>
+
+          <div class="or-divider">or paste your own</div>
+
+          <div>
+            <div class="field-label">Job Title</div>
+            <input type="text" id="jobTitle" class="input-field" placeholder="e.g. Senior Data Engineer" />
+          </div>
+
+          <div>
+            <div class="field-label">Required Skills <span style="color:var(--text-muted);font-weight:400;">(comma-separated)</span></div>
+            <input type="text" id="jobRequired" class="input-field" placeholder="e.g. Python, Spark, SQL, dbt" />
+          </div>
+
+          <div>
+            <div class="field-label">Nice-to-have Skills</div>
+            <input type="text" id="jobNice" class="input-field" placeholder="e.g. Kafka, Kubernetes, Airflow" />
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+            <div>
+              <div class="field-label">Min. Experience (yrs)</div>
+              <input type="number" id="jobExp" class="input-field" placeholder="e.g. 4" min="0" max="30" />
+            </div>
+            <div>
+              <div class="field-label">Department</div>
+              <input type="text" id="jobDept" class="input-field" placeholder="e.g. Engineering" />
+            </div>
+          </div>
+
+          <div class="status-row" id="jobStatus">
+            <span class="status-chip waiting" id="jobChip">⏳ No job configured</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Analyze Bar -->
+      <div class="analyze-bar">
+        <button class="btn btn-primary btn-lg" id="analyzeBtn" disabled id="analyzeBtn">
+          <span id="analyzeBtnIcon">🔍</span>
+          <span id="analyzeBtnText">Analyze Workforce</span>
+        </button>
+        <div style="font-size:0.82rem;color:var(--text-secondary);">
+          Results include match scores, gap analysis &amp; upskilling roadmaps
+        </div>
+      </div>
+
+      <div class="error-msg" id="errorMsg">
+        <span>⚠️</span>
+        <span id="errorText"></span>
+      </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="how-section">
+      <div class="section-label">How It Works</div>
+      <h2 style="font-size:2rem;font-weight:800;margin-bottom:12px;">Three Steps to Internal Talent Clarity</h2>
+      <p class="section-sub">No AI API required — pure intelligent matching in your browser.</p>
+
+      <div class="how-grid">
+        <div class="how-card stagger-in" style="animation-delay:0.1s;">
+          <div class="how-num">STEP 01</div>
+          <div class="how-icon">📂</div>
+          <div class="how-title">Load Your Workforce</div>
+          <div class="how-desc">Upload employee profiles as CSV or JSON. We parse skills, experience, certifications, and departments.</div>
+        </div>
+        <div class="how-card stagger-in" style="animation-delay:0.2s;">
+          <div class="how-num">STEP 02</div>
+          <div class="how-icon">💼</div>
+          <div class="how-title">Define the Role</div>
+          <div class="how-desc">Paste a job description or pick a preset. Specify required skills, nice-to-haves, and experience level.</div>
+        </div>
+        <div class="how-card stagger-in" style="animation-delay:0.3s;">
+          <div class="how-num">STEP 03</div>
+          <div class="how-icon">🤖</div>
+          <div class="how-title">AI Skill Matching</div>
+          <div class="how-desc">Our engine scores every employee using a weighted multi-factor algorithm covering skills, experience, and role affinity.</div>
+        </div>
+        <div class="how-card stagger-in" style="animation-delay:0.4s;">
+          <div class="how-num">STEP 04</div>
+          <div class="how-icon">📊</div>
+          <div class="how-title">Gap Analysis</div>
+          <div class="how-desc">For each candidate, see exactly which required skills are matched, and which are critical or minor gaps.</div>
+        </div>
+        <div class="how-card stagger-in" style="animation-delay:0.5s;">
+          <div class="how-num">STEP 05</div>
+          <div class="how-icon">🛤️</div>
+          <div class="how-title">Upskilling Roadmap</div>
+          <div class="how-desc">Get a prioritized, concrete learning plan with real courses (Coursera, Databricks, AWS), timelines, and why each matters.</div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

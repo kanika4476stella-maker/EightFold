@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TalentScope — Analysis Results</title>
+  <meta name="description" content="Internal talent discovery results: ranked candidates, skill gap analysis, and upskilling roadmaps." />
+  <link rel="stylesheet" href="styles/global.css" />
+  <style>
+    /* ── Results Page Specific Styles ── */
+
+    .results-header {
+      background: rgba(5,8,26,0.85);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      padding: 36px 40px 32px;
+      position: relative; z-index: 1;
+    }
+    .results-meta { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 20px; }
+    .job-title-display {
+      font-size: 2rem; font-weight: 900;
+      background: linear-gradient(135deg, #fff 0%, var(--indigo-light) 60%, var(--cyan) 100%);
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+      margin-bottom: 8px;
+    }
+    .results-summary-chips { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+
+    /* ── Layout ── */
+    .results-layout {
+      display: grid; grid-template-columns: 260px 1fr;
+      gap: 0; max-width: 1400px; margin: 0 auto;
+      position: relative; z-index: 1;
+      min-height: calc(100vh - 140px);
+    }
+    @media(max-width:900px) { .results-layout { grid-template-columns: 1fr; } }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      background: rgba(5,8,26,0.6); border-right: 1px solid var(--border);
+      padding: 28px 20px; backdrop-filter: blur(20px);
+      position: sticky; top: 65px; height: fit-content;
+    }
+    @media(max-width:900px){ .sidebar { position:static; border-right:none; border-bottom:1px solid var(--border); } }
+    .sidebar-section { margin-bottom: 28px; }
+    .sidebar-label {
+      font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--text-muted); margin-bottom: 12px;
+    }
+    .filter-option {
+      display: flex; align-items: center; gap: 8px; padding: 8px 10px;
+      border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition);
+      font-size: 0.85rem; user-select: none;
+    }
+    .filter-option:hover { background: rgba(255,255,255,0.05); }
+    .filter-option input[type="checkbox"] { accent-color: var(--indigo); width: 14px; height: 14px; }
+    .filter-option label { cursor: pointer; color: var(--text-secondary); }
+    .filter-option.active label { color: var(--text-primary); }
+
+    .score-filter { display: flex; flex-direction: column; gap: 8px; }
+    .score-filter input[type="range"] { accent-color: var(--indigo); width: 100%; }
+    .score-filter-display { font-size: 0.82rem; color: var(--text-secondary); text-align: center; }
+
+    /* ── Main Results ── */
+    .results-main { padding: 32px 36px; overflow-y: auto; }
+    @media(max-width:600px){ .results-main { padding: 20px 16px; } }
+
+    .results-controls {
+      display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 28px;
+    }
+    .sort-select {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 8px 12px; color: var(--text-primary);
+      font-family: var(--font); font-size: 0.82rem; cursor: pointer;
+    }
+    .count-display {
+      margin-left: auto; font-size: 0.82rem; color: var(--text-secondary);
+    }
+
+    /* ── Candidate Card ── */
+    .candidate-card {
+      background: var(--bg-card); border: 1px solid var(--border);
+      border-radius: var(--radius-xl); margin-bottom: 16px;
+      backdrop-filter: blur(20px); overflow: hidden;
+      transition: var(--transition);
+      animation: staggerIn 0.4s ease forwards; opacity: 0;
+    }
+    .candidate-card:hover { border-color: rgba(99,102,241,0.2); box-shadow: var(--shadow-card); }
+    .candidate-card.expanded { border-color: rgba(99,102,241,0.35); }
+
+    .card-summary {
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 20px; align-items: center; padding: 24px 28px; cursor: pointer;
+    }
+    @media(max-width:600px) { .card-summary { grid-template-columns: auto 1fr; gap: 14px; } }
+
+    /* Score ring */
+    .score-ring-svg circle.track { fill: none; stroke: rgba(255,255,255,0.07); }
+    .score-ring-svg circle.fill  {
+      fill: none; stroke-linecap: round;
+      transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    .candidate-info { flex: 1; min-width: 0; }
+    .candidate-name { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .candidate-meta { font-size: 0.82rem; color: var(--text-secondary); margin-bottom: 10px; }
+    .candidate-skills { display: flex; flex-wrap: wrap; gap: 6px; }
+
+    .expand-btn {
+      display: flex; align-items: center; gap: 6px; padding: 8px 14px;
+      border-radius: var(--radius-md); border: 1px solid var(--border);
+      background: transparent; color: var(--text-secondary); cursor: pointer;
+      font-family: var(--font); font-size: 0.8rem; font-weight: 500;
+      transition: var(--transition); white-space: nowrap;
+    }
+    .expand-btn:hover { border-color: var(--indigo); color: var(--indigo-light); background: rgba(99,102,241,0.08); }
+    .expand-btn .chevron { transition: transform 0.3s; display: inline-block; }
+    .candidate-card.expanded .expand-btn .chevron { transform: rotate(180deg); }
+
+    /* Expanded analysis panel */
+    .card-analysis {
+      border-top: 1px solid var(--border);
+      display: none; padding: 28px;
+    }
+    .candidate-card.expanded .card-analysis { display: block; }
+
+    .analysis-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px;
+    }
+    @media(max-width:700px){ .analysis-grid { grid-template-columns:1fr; } }
+
+    .analysis-panel {
+      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 20px;
+    }
+    .analysis-panel-title {
+      font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; margin-bottom: 14px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
+    .gap-row {
+      display: flex; align-items: center; gap: 8px; padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem;
+    }
+    .gap-row:last-child { border-bottom: none; }
+    .gap-row .gap-label { flex: 1; min-width: 0; }
+    .gap-icon { font-size: 0.9rem; }
+
+    /* Upskilling roadmap */
+    .roadmap-section { margin-top: 8px; }
+    .roadmap-title {
+      font-size: 0.85rem; font-weight: 700; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px; justify-content: space-between;
+    }
+    .readiness-chip {
+      font-size: 0.75rem; font-weight: 600; padding: 3px 10px; border-radius: 99px;
+    }
+
+    .roadmap-step {
+      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      border-radius: var(--radius-md); padding: 16px 18px; margin-bottom: 10px;
+      position: relative; overflow: hidden; transition: var(--transition);
+    }
+    .roadmap-step::before {
+      content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+    }
+    .roadmap-step.critical::before { background: var(--rose); }
+    .roadmap-step.recommended::before { background: var(--amber); }
+    .roadmap-step.growth::before { background: var(--emerald); }
+    .roadmap-step:hover { border-color: rgba(255,255,255,0.1); }
+
+    .step-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .step-skill { font-weight: 700; font-size: 0.9rem; }
+    .step-why { font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px; line-height: 1.5; }
+    .step-courses { display: flex; flex-direction: column; gap: 4px; }
+    .step-course {
+      display: flex; align-items: flex-start; gap: 8px;
+      font-size: 0.8rem; color: var(--text-secondary);
+    }
+    .step-course::before { content: '📚'; font-size: 0.7rem; margin-top: 2px; flex-shrink: 0; }
+    .step-footer {
+      display: flex; gap: 12px; margin-top: 10px; flex-wrap: wrap;
+    }
+    .step-meta {
+      display: flex; align-items: center; gap: 4px;
+      font-size: 0.72rem; color: var(--text-muted);
+    }
+
+    /* Ready badge */
+    .ready-now-banner {
+      display: flex; align-items: center; gap: 10px; padding: 12px 18px;
+      background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.2);
+      border-radius: var(--radius-md); margin-bottom: 20px;
+      font-size: 0.88rem; font-weight: 600; color: var(--emerald);
+    }
+
+    /* Empty state */
+    .empty-state {
+      text-align: center; padding: 80px 40px;
+      color: var(--text-secondary);
+    }
+    .empty-state .big-icon { font-size: 4rem; margin-bottom: 16px; }
+    .empty-state h3 { font-size: 1.2rem; font-weight: 700; margin-bottom: 8px; color: var(--text-primary); }
+
+    /* Rank badge */
+    .rank-badge {
+      position: absolute; top: -8px; left: -8px;
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.7rem; font-weight: 800; z-index: 2;
+    }
+    .rank-1 { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
+    .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; }
+    .rank-3 { background: linear-gradient(135deg, #92400e, #78350f); color: #fff; }
+    .rank-other { background: rgba(255,255,255,0.1); color: var(--text-muted); }
+
+    /* Skills match bar */
+    .match-bar-wrap { margin: 10px 0 14px; }
+    .match-bar-label {
+      display: flex; justify-content: space-between;
+      font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-gradient"></div>
+  <div class="particles" id="particles"></div>
+
+  <div class="page-content">
+    <!-- Navbar -->
+    <nav class="navbar">
+      <a href="index.html" class="navbar-brand">
+        <div class="logo-icon">🔭</div>
+        TalentScope
+      </a>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <a href="index.html" class="btn btn-secondary btn-sm">← New Analysis</a>
+      </div>
+    </nav>
+
+    <!-- Results Header -->
+    <div class="results-header" id="resultsHeader">
+      <div class="results-meta">
+        <div>
+          <div style="font-size:0.75rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--indigo-light);margin-bottom:8px;">
+            🔍 Analysis Complete
+          </div>
+          <div class="job-title-display" id="jobTitleDisplay">Loading…</div>
+          <div style="font-size:0.85rem;color:var(--text-secondary);" id="jobMetaDisplay"></div>
+          <div class="results-summary-chips" id="summaryChips"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end;">
+          <div id="topMatchBadge"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Results Layout -->
+    <div class="results-layout">
+
+      <!-- Sidebar Filters -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Min. Match Score</div>
+          <div class="score-filter">
+            <input type="range" id="scoreFilter" min="0" max="100" value="0" />
+            <div class="score-filter-display">Show ≥ <strong id="scoreFilterVal">0</strong>%</div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Department</div>
+          <div id="deptFilters"></div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Gap Severity</div>
+          <div>
+            <div class="filter-option" id="gapLow">
+              <input type="checkbox" id="chk_low" checked />
+              <label for="chk_low">🟢 Low gap</label>
+            </div>
+            <div class="filter-option" id="gapMed">
+              <input type="checkbox" id="chk_med" checked />
+              <label for="chk_med">🟡 Medium gap</label>
+            </div>
+            <div class="filter-option" id="gapHigh">
+              <input type="checkbox" id="chk_high" checked />
+              <label for="chk_high">🔴 High gap</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <div class="sidebar-label">Quick Actions</div>
+          <button class="btn btn-ghost" style="width:100%;margin-bottom:8px;" id="showReadyNow">
+            ✅ Ready Now Only
+          </button>
+          <button class="btn btn-ghost" style="width:100%;" id="resetFilters">
+            ↺ Reset Filters
+          </button>
+        </div>
+      </aside>
+
+      <!-- Candidate Results -->
+      <main class="results-main">
+        <div class="results-controls">
+          <span style="font-size:0.82rem;color:var(--text-secondary);font-weight:600;">Sort by:</span>
+          <select class="sort-select" id="sortSelect">
+            <option value="score">Match Score (high → low)</option>
+            <option value="experience">Experience (high → low)</option>
+            <option value="gaps">Fewest Gaps</option>
+            <option value="readiness">Readiness (fastest)</option>
+          </select>
+          <div class="count-display" id="countDisplay"></div>
+        </div>
+
+        <div id="candidateList"></div>
+      </main>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/results.js"></script>
+</body>
+</html>
