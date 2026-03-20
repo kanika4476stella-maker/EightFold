@@ -536,7 +536,7 @@ function buildRoadmapSteps(steps) {
 
 // ─── Candidate Card ─────────────────────────────────────────────
 function buildCandidateCard(result, globalRank, displayRank, employeeId) {
-  const { employee, score, gap, roadmap, is_ready_now, readiness_weeks } = result;
+  const { employee, score, gap, roadmap, is_ready_now, readiness_weeks, match_rationale } = result;
 
   const avatarColors = ['#6366f1','#22d3ee','#10b981','#f59e0b','#a855f7','#f43f5e','#0891b2'];
   const avatarColor  = avatarColors[globalRank % avatarColors.length];
@@ -599,6 +599,10 @@ function buildCandidateCard(result, globalRank, displayRank, employeeId) {
 
       <!-- Expansion Panel -->
       <div class="card-analysis" id="analysis_${employee.id}">
+        <div style="background: rgba(99,102,241,0.06); padding: 14px 18px; border-radius: var(--radius-md); border-left: 3px solid var(--indigo); margin-bottom: 24px;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--indigo-light); margin-bottom: 4px; letter-spacing: 0.05em;">AI RATIONALE</div>
+          <div style="font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5;">${match_rationale}</div>
+        </div>
         <div class="analysis-grid">
           ${buildGapPanel(gap, job)}
           ${buildProgressPanel(gap, job)}

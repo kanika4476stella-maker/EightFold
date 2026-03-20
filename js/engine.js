@@ -240,11 +240,22 @@ const Engine = (() => {
       const gap     = generateGapAnalysis(emp, job);
       const roadmap = generateRoadmap(gap, emp, job);
 
+      let match_rationale = "";
+      if (score >= 80 && gap.critical_gaps.length === 0) {
+        match_rationale = `Exceptional fit. Strong background in ${gap.matched_required.slice(0,2).join(', ') || emp.skills.slice(0,2).join(', ')}. Ready for immediate transition.`;
+      } else if (score >= 60) {
+        match_rationale = `High potential candidate. Strong in ${gap.matched_required.slice(0,2).join(', ') || emp.skills[0]}, but requires targeted upskilling in ${gap.critical_gaps.slice(0,2).join(' and ')} to meet core requirements.`;
+      } else {
+        const domains = [...gap.critical_gaps, ...gap.minor_gaps].slice(0,3);
+        match_rationale = `Partial match. Foundational experience present, but significant development needed in ${domains.join(', ')} domains before being role-ready.`;
+      }
+
       return {
         employee: emp,
         score,
         gap,
         roadmap,
+        match_rationale,
         readiness_weeks: gap.critical_gaps.length === 0 ? 0 : roadmap.total_weeks,
         is_ready_now:    gap.critical_gaps.length === 0 && gap.experience_gap === 0,
       };
