@@ -242,12 +242,12 @@ const Engine = (() => {
 
       let match_rationale = "";
       if (score >= 80 && gap.critical_gaps.length === 0) {
-        match_rationale = `Exceptional fit. Strong background in ${gap.matched_required.slice(0,2).join(', ') || emp.skills.slice(0,2).join(', ')}. Ready for immediate transition.`;
+        match_rationale = `The candidate demonstrates exceptional alignment with the core role requirements. Their advanced proficiency in ${gap.matched_required.slice(0,2).join(', ') || emp.skills.slice(0,2).join(', ')} combined with their professional experience makes them a highly suitable internal candidate for immediate transition.`;
       } else if (score >= 60) {
-        match_rationale = `High potential candidate. Strong in ${gap.matched_required.slice(0,2).join(', ') || emp.skills[0]}, but requires targeted upskilling in ${gap.critical_gaps.slice(0,2).join(' and ')} to meet core requirements.`;
+        match_rationale = `The candidate presents strong potential for this role. While they exhibit proficiency in ${gap.matched_required.slice(0,2).join(', ') || emp.skills[0]}, a targeted development plan focusing on ${gap.critical_gaps.slice(0,2).join(' and ')} is recommended to ensure full readiness for the position's responsibilities.`;
       } else {
         const domains = [...gap.critical_gaps, ...gap.minor_gaps].slice(0,3);
-        match_rationale = `Partial match. Foundational experience present, but significant development needed in ${domains.join(', ')} domains before being role-ready.`;
+        match_rationale = `A partial alignment was identified during the skill mapping process. While foundational experience is present, a substantial upskilling phase in ${domains.join(', ')} domains is required before the candidate can meet the current selection criteria for this specific role.`;
       }
 
       return {

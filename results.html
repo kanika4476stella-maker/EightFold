@@ -4,13 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Skillसेतु — Analysis Results</title>
-  <meta name="description" content="Internal talent discovery results: ranked candidates, skill gap analysis, and upskilling roadmaps." />
+  <meta name="description" content="Internal skills discovery results: ranked candidates, skill gap analysis, and upskilling roadmaps." />
   <link rel="stylesheet" href="styles/global.css" />
   <style>
     /* ── Results Page Specific Styles ── */
 
     .results-header {
-      background: rgba(5,8,26,0.85);
+      background: rgba(255,255,255,);
       border-bottom: 1px solid var(--border);
       backdrop-filter: blur(20px);
       padding: 36px 40px 32px;
@@ -36,7 +36,7 @@
 
     /* ── Sidebar ── */
     .sidebar {
-      background: rgba(5,8,26,0.6); border-right: 1px solid var(--border);
+      background: rgba(255,255,255,); border-right: 1px solid var(--border);
       padding: 28px 20px; backdrop-filter: blur(20px);
       position: sticky; top: 65px; height: fit-content;
     }
@@ -51,7 +51,7 @@
       border-radius: var(--radius-sm); cursor: pointer; transition: var(--transition);
       font-size: 0.85rem; user-select: none;
     }
-    .filter-option:hover { background: rgba(255,255,255,0.05); }
+    .filter-option:hover { background: rgba(0,0,0,); }
     .filter-option input[type="checkbox"] { accent-color: var(--indigo); width: 14px; height: 14px; }
     .filter-option label { cursor: pointer; color: var(--text-secondary); }
     .filter-option.active label { color: var(--text-primary); }
@@ -94,7 +94,7 @@
     @media(max-width:600px) { .card-summary { grid-template-columns: auto 1fr; gap: 14px; } }
 
     /* Score ring */
-    .score-ring-svg circle.track { fill: none; stroke: rgba(255,255,255,0.07); }
+    .score-ring-svg circle.track { fill: none; stroke: rgba(0,0,0,); }
     .score-ring-svg circle.fill  {
       fill: none; stroke-linecap: round;
       transition: stroke-dashoffset 1.2s cubic-bezier(0.4,0,0.2,1);
@@ -129,7 +129,7 @@
     @media(max-width:700px){ .analysis-grid { grid-template-columns:1fr; } }
 
     .analysis-panel {
-      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      background: rgba(0,0,0,); border: 1px solid var(--border);
       border-radius: var(--radius-md); padding: 20px;
     }
     .analysis-panel-title {
@@ -140,7 +140,7 @@
 
     .gap-row {
       display: flex; align-items: center; gap: 8px; padding: 6px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 0.85rem;
+      border-bottom: 1px solid rgba(0,0,0,); font-size: 0.85rem;
     }
     .gap-row:last-child { border-bottom: none; }
     .gap-row .gap-label { flex: 1; min-width: 0; }
@@ -157,7 +157,7 @@
     }
 
     .roadmap-step {
-      background: rgba(255,255,255,0.025); border: 1px solid var(--border);
+      background: rgba(0,0,0,); border: 1px solid var(--border);
       border-radius: var(--radius-md); padding: 16px 18px; margin-bottom: 10px;
       position: relative; overflow: hidden; transition: var(--transition);
     }
@@ -167,7 +167,7 @@
     .roadmap-step.critical::before { background: var(--rose); }
     .roadmap-step.recommended::before { background: var(--amber); }
     .roadmap-step.growth::before { background: var(--emerald); }
-    .roadmap-step:hover { border-color: rgba(255,255,255,0.1); }
+    .roadmap-step:hover { border-color: rgba(0,0,0,); }
 
     .step-header { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
     .step-skill { font-weight: 700; font-size: 0.9rem; }
@@ -212,7 +212,7 @@
     .rank-1 { background: linear-gradient(135deg, #f59e0b, #ef4444); color: #fff; }
     .rank-2 { background: linear-gradient(135deg, #94a3b8, #64748b); color: #fff; }
     .rank-3 { background: linear-gradient(135deg, #92400e, #78350f); color: #fff; }
-    .rank-other { background: rgba(255,255,255,0.1); color: var(--text-muted); }
+    .rank-other { background: rgba(0,0,0,); color: var(--text-muted); }
 
     /* Skills match bar */
     .match-bar-wrap { margin: 10px 0 14px; }
@@ -222,7 +222,7 @@
     }
 
     /* ── Analytics View ── */
-    .view-switcher { display: flex; gap: 4px; background: rgba(255,255,255,0.04); padding: 4px; border-radius: var(--radius-md); margin-bottom: 28px; width: fit-content; flex-wrap: wrap; }
+    .view-switcher { display: flex; gap: 4px; background: rgba(0,0,0,); padding: 4px; border-radius: var(--radius-md); margin-bottom: 28px; width: fit-content; flex-wrap: wrap; }
     .view-tab { padding: 8px 18px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); transition: var(--transition); }
     .view-tab:hover { color: var(--text-primary); }
     .view-tab.active { background: var(--bg-card); color: var(--indigo-light); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
@@ -387,6 +387,21 @@
           </div>
         </div>
       </div>
+    <!-- Feedback Letter Modal -->
+    <div class="modal-overlay" id="feedbackModal">
+      <div class="modal-content" style="max-width: 700px;">
+        <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+        <div id="feedbackModalTitle" style="font-size: 1.25rem; font-weight: 800; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+          Formal Candidate Communication
+        </div>
+        <div id="feedbackModalBody" style="background: rgba(0,0,0,); padding: 32px; border-radius: var(--radius-md); border: 1px solid var(--border); font-family: 'Courier New', Courier, monospace; white-space: pre-wrap; line-height: 1.6; color: var(--text-secondary); max-height: 60vh; overflow-y: auto;">
+          <!-- Dynamically filled -->
+        </div>
+        <div style="margin-top: 24px; display: flex; justify-content: flex-end; gap: 12px;">
+          <button class="btn btn-secondary" onclick="copyFeedbackText()">📋 Copy to Clipboard</button>
+          <button class="btn btn-primary" onclick="closeFeedbackModal()">Close</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -394,6 +409,7 @@
   <script src="js/gap_dna.js"></script>
   <script src="js/analytics.js"></script>
   <script src="js/strategic_planning.js"></script>
+  <script src="js/feedback.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/results.js"></script>

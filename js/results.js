@@ -87,7 +87,7 @@ function renderStrat() {
       <div class="rec-skill">${r.skill} <span style="font-size:0.7rem;color:var(--text-muted);font-weight:normal;">(${r.priority})</span></div>
       <div class="rec-reason" style="margin-bottom:12px;">${r.rationale}</div>
       ${r.redeployment_candidates ? `
-        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);font-size:0.8rem;">
+        <div style="padding:10px;background:rgba(0,0,0,);border-radius:var(--radius-sm);font-size:0.8rem;">
           <div style="font-weight:600;margin-bottom:4px;">Top Match: ${r.redeployment_candidates[0].name}</div>
           <div class="progress-bar-wrap">
             <div class="progress-bar-fill" style="width:${r.redeployment_candidates[0].match_pct}%;background:var(--emerald);"></div>
@@ -509,8 +509,47 @@ async function openRoadmapModal(empId) {
 function closeRoadmapModal() {
   document.getElementById('roadmapModal').classList.remove('show');
 }
-window.openRoadmapModal = openRoadmapModal;
+window.openRoadmapModal  = openRoadmapModal;
 window.closeRoadmapModal = closeRoadmapModal;
+
+// ─── Feedback Selection/Rejection ──────────────────────────────
+async function openFeedbackModal(empId, type) {
+  const result = allResults.find(r => r.employee.id === empId);
+  if (!result) return;
+
+  const overlay = document.getElementById('feedbackModal');
+  const body    = document.getElementById('feedbackModalBody');
+  const title   = document.getElementById('feedbackModalTitle');
+  
+  overlay.classList.add('show');
+  title.textContent = type === 'select' ? 'Official Selection Letter' : 'Professional Feedback Letter';
+  
+  const text = type === 'select' 
+    ? Feedback.generateSelection(result.employee, job, result)
+    : Feedback.generateRejection(result.employee, job, result);
+    
+  body.textContent = text;
+}
+
+function closeFeedbackModal() {
+  document.getElementById('feedbackModal').classList.remove('show');
+}
+
+function copyFeedbackText() {
+  const text = document.getElementById('feedbackModalBody').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('#feedbackModal .btn-secondary');
+    if (btn) {
+      const oldText = btn.innerHTML;
+      btn.innerHTML = '✅ Copied!';
+      setTimeout(() => btn.innerHTML = oldText, 2000);
+    }
+  });
+}
+
+window.openFeedbackModal  = openFeedbackModal;
+window.closeFeedbackModal = closeFeedbackModal;
+window.copyFeedbackText   = copyFeedbackText;
 
 function buildRoadmapSteps(steps) {
   if (!steps || steps.length === 0) {
@@ -609,6 +648,17 @@ function buildCandidateCard(result, globalRank, displayRank, employeeId) {
         </div>
         <div class="roadmap-section">
           ${buildRoadmap(roadmap, is_ready_now, employee.id)}
+        </div>
+        
+        <!-- Decision Actions -->
+        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; gap: 12px; align-items: center;">
+          <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-muted); flex: 1;">DECISION ACTIONS</div>
+          <button class="btn btn-secondary btn-sm" style="border-color: var(--rose); color: var(--rose);" onclick="event.stopPropagation(); openFeedbackModal('${employee.id}', 'reject')">
+            ✖ Decline & Send Feedback
+          </button>
+          <button class="btn btn-primary btn-sm" style="background: var(--emerald); border-color: var(--emerald);" onclick="event.stopPropagation(); openFeedbackModal('${employee.id}', 'select')">
+            ✔ Select Candidate
+          </button>
         </div>
       </div>
     </div>`;
