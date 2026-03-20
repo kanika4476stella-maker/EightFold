@@ -8,6 +8,7 @@ let allResults = [];
 let allEmployees = [];
 let job = {};
 let analyticsData = null;
+let stratData = null;
 
 (function loadFromSession() {
   const empRaw = sessionStorage.getItem('ts_employees');
@@ -57,7 +58,62 @@ function runAnalysis() {
 async function runWorkforceAnalytics() {
   analyticsData = await Analytics.analyze(allEmployees, [job]);
   renderAnalytics();
+  runStrategicPlanning();
   updateHeaderStats();
+}
+
+async function runStrategicPlanning() {
+  stratData = await StrategicPlanning.generatePlan(analyticsData.skill_coverage, allEmployees);
+  renderStrat();
+}
+
+function renderStrat() {
+  if (!stratData) return;
+  const container = document.getElementById('stratView');
+
+  // Blocked Goals
+  const goalsHTML = stratData.blocked_goals.map(g => `
+    <div class="goal-card ${g.priority}">
+      <div style="font-size:0.7rem;font-weight:700;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:8px;">${g.priority} PRIORITY ${g.estimated_delay_weeks ? `· ${g.estimated_delay_weeks} WK DELAY` : ''}</div>
+      <div style="font-size:1.1rem;font-weight:700;margin-bottom:12px;">${g.goal}</div>
+      <div style="font-size:0.8rem;color:var(--text-secondary);">Blocked by: ${g.blocked_by_skills.join(', ')}</div>
+    </div>
+  `).join('');
+
+  // Gap Resolutions
+  const resHTML = stratData.gap_resolutions.map(r => `
+    <div class="rec-card">
+      <div class="rec-tag ${r.recommendation}">${r.recommendation}</div>
+      <div class="rec-skill">${r.skill} <span style="font-size:0.7rem;color:var(--text-muted);font-weight:normal;">(${r.priority})</span></div>
+      <div class="rec-reason" style="margin-bottom:12px;">${r.rationale}</div>
+      ${r.redeployment_candidates ? `
+        <div style="padding:10px;background:rgba(255,255,255,0.03);border-radius:var(--radius-sm);font-size:0.8rem;">
+          <div style="font-weight:600;margin-bottom:4px;">Top Match: ${r.redeployment_candidates[0].name}</div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" style="width:${r.redeployment_candidates[0].match_pct}%;background:var(--emerald);"></div>
+          </div>
+        </div>
+      ` : ''}
+    </div>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="stagger-in">
+      <div class="strat-exec">
+        <strong>Executive Summary:</strong> ${stratData.executive_summary}
+      </div>
+
+      <div class="insight-section">
+        <div class="insight-title">🎯 AT-RISK STRATEGIC GOALS</div>
+        <div class="strat-grid">${goalsHTML || '<p style="color:var(--text-muted);">No strategic goals currently blocked.</p>'}</div>
+      </div>
+
+      <div class="insight-section">
+        <div class="insight-title">⚡ REQUIRED ACTIONS</div>
+        <div class="rec-grid">${resHTML}</div>
+      </div>
+    </div>
+  `;
 }
 
 function renderAnalytics() {
@@ -116,19 +172,27 @@ function renderAnalytics() {
 function switchView(view) {
   const matchView = document.getElementById('matchingView');
   const analView = document.getElementById('analyticsView');
+  const stratView = document.getElementById('stratView');
   const tabMatch = document.getElementById('tabMatch');
   const tabAnal = document.getElementById('tabAnalytics');
+  const tabStrat = document.getElementById('tabStrat');
+
+  matchView.style.display = 'none';
+  analView.style.display = 'none';
+  stratView.style.display = 'none';
+  tabMatch.classList.remove('active');
+  tabAnal.classList.remove('active');
+  tabStrat.classList.remove('active');
 
   if (view === 'matching') {
     matchView.style.display = 'block';
-    analView.style.display = 'none';
     tabMatch.classList.add('active');
-    tabAnal.classList.remove('active');
-  } else {
-    matchView.style.display = 'none';
+  } else if (view === 'analytics') {
     analView.style.display = 'block';
-    tabMatch.classList.remove('active');
     tabAnal.classList.add('active');
+  } else if (view === 'strat') {
+    stratView.style.display = 'block';
+    tabStrat.classList.add('active');
   }
 }
 window.switchView = switchView;
