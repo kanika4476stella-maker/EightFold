@@ -1,4 +1,4 @@
-# 🔭 TalentScope — Internal Talent Liquidity Agent
+# 🔭 Skillसेतु — Internal Talent Liquidity Agent
 
 > **Eightfold Hackathon 2026** | Impact Area 03: Internal Talent Liquidity
 
@@ -107,7 +107,7 @@ For each skill gap, the engine generates:
 
 ## 🧬 AI Learning DNA (Detailed Roadmaps)
 
-Beyond simple course lists, TalentScope generates a **Personalised AI Learning DNA**:
+Beyond simple course lists, Skillसेतु generates a **Personalised AI Learning DNA**:
 - **30-Day Foundation Phase**: Intensive focus on the primary skill gap.
 - **90-Day Advanced Phase**: Production-level application and specialization.
 - **Checkable Milestones**: Specific weekly deliverables (scrapers, APIs, warehouses) for manager review.
