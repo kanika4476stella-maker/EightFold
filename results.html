@@ -318,9 +318,24 @@
         <div id="candidateList"></div>
       </main>
     </div>
+
+    <!-- Detailed Roadmap Modal -->
+    <div class="modal-overlay" id="roadmapModal">
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeRoadmapModal()">&times;</button>
+        <div id="roadmapModalBody">
+          <!-- Dynamically filled -->
+          <div style="text-align:center;padding:40px;">
+            <div class="spinner" style="margin:0 auto 20px;"></div>
+            <p>Generating personalized learning path...</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="js/data.js"></script>
+  <script src="js/gap_dna.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/results.js"></script>

@@ -274,7 +274,7 @@ function buildProgressPanel(gap, job) {
 }
 
 // ─── Roadmap ────────────────────────────────────────────────────
-function buildRoadmap(roadmap, isReadyNow) {
+function buildRoadmap(roadmap, isReadyNow, employeeId) {
   if (isReadyNow) {
     return `<div class="ready-now-banner">🚀 This candidate meets all required skills and experience — ready now!</div>
       ${roadmap.steps.length > 0 ? `<div style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:16px;">Optional recommendations to further strengthen fit:</div>` : ''}
@@ -286,13 +286,85 @@ function buildRoadmap(roadmap, isReadyNow) {
 
   return `
     <div class="roadmap-title">
-      <span>🛤️ Upskilling Roadmap</span>
-      <span class="readiness-chip badge badge-${weeks === 0 ? 'emerald' : weeks < 12 ? 'amber' : 'rose'}">
-        Ready in: ${display}
-      </span>
+      <span>Track: Upskilling Roadmap</span>
+      <button class="btn btn-primary btn-sm" onclick="openRoadmapModal('${employeeId}')">✨ View AI Learning DNA</button>
     </div>
+    <div style="font-size:0.75rem;color:var(--text-secondary);margin-bottom:14px;">Estimated readiness: <strong>${display}</strong></div>
     ${buildRoadmapSteps(roadmap.steps)}`;
 }
+
+// ─── Phase Modal Logic ──────────────────────────────────────────
+async function openRoadmapModal(empId) {
+  const result = allResults.find(r => r.employee.id === empId);
+  if (!result) return;
+
+  const overlay = document.getElementById('roadmapModal');
+  const body = document.getElementById('roadmapModalBody');
+  overlay.classList.add('show');
+
+  // Fill initially with loading
+  body.innerHTML = `
+    <div style="text-align:center;padding:80px;">
+      <div class="spinner" style="margin:0 auto 20px; width:40px; height:40px;"></div>
+      <h3 style="font-size:1.5rem;font-weight:800;margin-bottom:10px;">Generating Personalised DNA...</h3>
+      <p style="color:var(--text-secondary);">Analyzing ${result.employee.name}'s skill profile vs. ${job.title}</p>
+    </div>
+  `;
+
+  // Generate real DNA
+  const dna = await GapDNA.generate(result.employee, job, result.gap.critical_gaps.concat(result.gap.minor_gaps));
+
+  body.innerHTML = `
+    <div class="stagger-in">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:32px;">
+        <div>
+          <div class="section-label">AI-Personalised Learning Path</div>
+          <h2 style="font-size:1.8rem;font-weight:900;margin-bottom:6px;">${dna.employee_name} ➔ ${dna.target_role}</h2>
+          <div style="display:flex;gap:12px;font-size:0.85rem;color:var(--text-secondary);">
+            <span>🗓 Estimated Ready: <strong>${dna.estimated_ready_date}</strong></span>
+            <span>⏱ Total Commitment: <strong>${dna.total_weeks} weeks</strong></span>
+          </div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:0.7rem;color:var(--text-muted);margin-bottom:4px;">SUCCESS METRIC</div>
+          <div style="font-size:0.8rem;font-weight:600;max-width:300px;color:var(--text-primary);">${dna.success_metric}</div>
+        </div>
+      </div>
+
+      ${dna.phases.map(phase => `
+        <div class="dna-phase">
+          <div class="dna-phase-title">
+            <span>${phase.phase === '30_days' ? '🎯 30-Day Foundation' : '🚀 90-Day Advanced Application'}</span>
+            <span class="dna-phase-badge">Focus: ${phase.focus_skill}</span>
+          </div>
+          <div class="week-grid">
+            ${phase.weeks.map(wk => `
+              <div class="week-card">
+                <div class="week-num">WEEK ${wk.week}</div>
+                <div class="week-goal">${wk.goal}</div>
+                <div class="week-resource">📖 ${wk.resource}</div>
+                <div class="milestone">
+                  <input type="checkbox" id="check_${wk.week}" />
+                  <label for="check_${wk.week}">Build: ${wk.deliverable}</label>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `).join('')}
+
+      <div class="dna-success-banner">
+        <strong>Manager Tip:</strong> Review the deliverables for weeks ${dna.phases[0].weeks.length} and ${dna.phases[0].weeks.length + (dna.phases[1]?.weeks.length || 0)} as primary readiness validation milestones.
+      </div>
+    </div>
+  `;
+}
+
+function closeRoadmapModal() {
+  document.getElementById('roadmapModal').classList.remove('show');
+}
+window.openRoadmapModal = openRoadmapModal;
+window.closeRoadmapModal = closeRoadmapModal;
 
 function buildRoadmapSteps(steps) {
   if (!steps || steps.length === 0) {
@@ -317,7 +389,7 @@ function buildRoadmapSteps(steps) {
 }
 
 // ─── Candidate Card ─────────────────────────────────────────────
-function buildCandidateCard(result, globalRank, displayRank) {
+function buildCandidateCard(result, globalRank, displayRank, employeeId) {
   const { employee, score, gap, roadmap, is_ready_now, readiness_weeks } = result;
 
   const avatarColors = ['#6366f1','#22d3ee','#10b981','#f59e0b','#a855f7','#f43f5e','#0891b2'];
@@ -386,7 +458,7 @@ function buildCandidateCard(result, globalRank, displayRank) {
           ${buildProgressPanel(gap, job)}
         </div>
         <div class="roadmap-section">
-          ${buildRoadmap(roadmap, is_ready_now)}
+          ${buildRoadmap(roadmap, is_ready_now, employee.id)}
         </div>
       </div>
     </div>`;
@@ -435,7 +507,7 @@ function renderResults(results) {
 
   list.innerHTML = results.map((r, i) => {
     const globalRank = allResults.indexOf(r);
-    return buildCandidateCard(r, globalRank, i + 1);
+    return buildCandidateCard(r, globalRank, i + 1, r.employee.id);
   }).join('');
 
   // Animate all visible progress bars and score rings with a short delay

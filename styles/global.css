@@ -310,6 +310,59 @@ select.input-field option { background: #1a1f3a; }
   color: var(--emerald); font-weight: 500;
 }
 
+/* ── Modal (Roadmap) ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);
+  z-index: 1000; display: none; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease; padding: 20px;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+  background: var(--bg-secondary); border: 1px solid var(--border);
+  border-radius: var(--radius-xl); width: 100%; max-width: 1000px;
+  max-height: 90vh; overflow-y: auto; position: relative;
+  padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+.modal-close {
+  position: absolute; top: 20px; right: 20px; font-size: 1.5rem;
+  color: var(--text-muted); cursor: pointer; border: none; background: transparent;
+}
+.modal-close:hover { color: var(--text-primary); }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ── Timeline (Week Cards) ── */
+.dna-phase-title {
+  font-size: 1.25rem; font-weight: 800; color: var(--indigo-light); margin-bottom: 24px;
+  display: flex; align-items: center; gap: 12px;
+}
+.dna-phase-badge {
+  font-size: 0.65rem; padding: 3px 10px; border-radius: 99px; background: rgba(99,102,241,0.1); border: 1px solid rgba(99,102,241,0.3);
+}
+
+.week-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 40px; }
+.week-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius-md); padding: 18px; transition: var(--transition);
+}
+.week-card:hover { border-color: var(--indigo); transform: translateY(-4px); background: var(--bg-card-hover); }
+.week-num { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 12px; }
+.week-goal { font-size: 0.9rem; font-weight: 600; margin-bottom: 8px; line-height: 1.4; color: var(--text-primary); }
+.week-resource { font-size: 0.8rem; color: var(--indigo-light); margin-bottom: 12px; display: block; }
+
+.milestone {
+  display: flex; align-items: flex-start; gap: 8px; padding-top: 12px; border-top: 1px solid var(--border);
+  font-size: 0.78rem; color: var(--text-secondary);
+}
+.milestone input[type="checkbox"] { accent-color: var(--emerald); width: 15px; height: 15px; margin-top: 2px; }
+
+/* ── Progress Indicators ── */
+.dna-success-banner {
+  background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.25);
+  border-radius: var(--radius-md); padding: 16px 20px; color: var(--emerald);
+  font-size: 0.9rem; margin-top: 20px;
+}
+
 /* ─── Timeline (Roadmap) ─── */
 .timeline { position: relative; padding-left: 28px; }
 .timeline::before {
