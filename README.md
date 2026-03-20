@@ -29,12 +29,15 @@ eightfold hackathon/
 ├── js/
 │   ├── parser.js            ← CSV + JSON profile parser
 │   ├── engine.js            ← Matching, gap analysis, roadmap engine
+│   ├── gap_dna.js           ← ✨ NEW: AI Learning DNA generator
+│   ├── data.js              ← Bundled demo data (CORS-safe)
 │   ├── app.js               ← Landing page controller
 │   └── results.js           ← Results page controller
-└── data/
-    ├── sample_employees.csv ← 15 sample employee profiles (CSV)
-    ├── sample_employees.json← 15 sample employee profiles (JSON)
-    └── sample_jobs.json     ← 3 sample job descriptions
+├── data/
+│   ├── sample_employees.csv ← 15 sample employee profiles (CSV)
+│   ├── sample_employees.json← 15 sample employee profiles (JSON)
+│   └── sample_jobs.json     ← 3 sample job descriptions
+└── serve.js                 ← Simple Node.js local server
 ```
 
 ---
@@ -99,6 +102,17 @@ For each skill gap, the engine generates:
 - **Time estimates** — weeks to close each gap
 - **Skill level** — Beginner / Intermediate / Advanced
 - **Readiness estimate** — total weeks to be ready for the role
+
+---
+
+## 🧬 AI Learning DNA (Detailed Roadmaps)
+
+Beyond simple course lists, TalentScope generates a **Personalised AI Learning DNA**:
+- **30-Day Foundation Phase**: Intensive focus on the primary skill gap.
+- **90-Day Advanced Phase**: Production-level application and specialization.
+- **Checkable Milestones**: Specific weekly deliverables (scrapers, APIs, warehouses) for manager review.
+- **Bridge-based Learning**: Uses existing skills (e.g., Python) as a bridge to new frameworks (e.g., Airflow).
+- **Success Metrics**: Specific outcome-based signals that prove the employee is "Ready Now."
 
 ---
 
