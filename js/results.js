@@ -7,6 +7,7 @@
 let allResults = [];
 let allEmployees = [];
 let job = {};
+let analyticsData = null;
 
 (function loadFromSession() {
   const empRaw = sessionStorage.getItem('ts_employees');
@@ -45,11 +46,92 @@ async function loadDemo() {
 // ─── Run analysis ───────────────────────────────────────────────
 function runAnalysis() {
   allResults = Engine.analyze(allEmployees, job);
+  runWorkforceAnalytics();
   renderHeader();
   renderSidebarFilters();
   renderResults(allResults);
   spawnParticles();
 }
+
+// ─── Workforce Analytics ────────────────────────────────────────
+async function runWorkforceAnalytics() {
+  analyticsData = await Analytics.analyze(allEmployees, [job]);
+  renderAnalytics();
+  updateHeaderStats();
+}
+
+function renderAnalytics() {
+  if (!analyticsData) return;
+  const container = document.getElementById('analyticsView');
+
+  // Skill Coverage Stats
+  const coverageHTML = analyticsData.skill_coverage.map(c => `
+    <div class="coverage-card risk-${c.risk_level}">
+      <div class="coverage-skill">${c.skill}</div>
+      <div class="coverage-stat">
+        <span class="coverage-val">${c.coverage_pct}%</span>
+        <span class="coverage-label">coverage</span>
+      </div>
+      ${c.risk_reason ? `<div class="risk-banner ${c.risk_level}">⚠️ ${c.risk_reason}</div>` : ''}
+    </div>
+  `).join('');
+
+  // SPOF List
+  const spofHTML = analyticsData.single_points_of_failure.map(s => `
+    <div class="spof-card">
+      <span class="spof-skill">${s.skill}</span>
+      <span class="spof-emp">👤 ${s.only_employee}</span>
+    </div>
+  `).join('');
+
+  // Recommendation Cards
+  const recHTML = analyticsData.hire_vs_train_recommendation.map(r => `
+    <div class="rec-card">
+      <div class="rec-tag ${r.recommendation}">${r.recommendation}</div>
+      <div class="rec-skill">${r.skill}</div>
+      <div class="rec-reason">${r.reason}</div>
+    </div>
+  `).join('');
+
+  container.innerHTML = `
+    <div class="stagger-in">
+      <div class="insight-section">
+        <div class="insight-title">📊 Workforce Skill Distribution</div>
+        <div class="analytics-grid">${coverageHTML}</div>
+      </div>
+
+      <div class="insight-section">
+        <div class="insight-title">🔴 Single Points of Failure (Bus Factor = 1)</div>
+        <div class="spof-list">${spofHTML || '<p style="color:var(--text-muted);">No single points of failure detected. Workforce is resilient.</p>'}</div>
+      </div>
+
+      <div class="insight-section">
+        <div class="insight-title">⚡ Strategy: Hire vs. Train</div>
+        <div class="rec-grid">${recHTML}</div>
+      </div>
+    </div>
+  `;
+}
+
+function switchView(view) {
+  const matchView = document.getElementById('matchingView');
+  const analView = document.getElementById('analyticsView');
+  const tabMatch = document.getElementById('tabMatch');
+  const tabAnal = document.getElementById('tabAnalytics');
+
+  if (view === 'matching') {
+    matchView.style.display = 'block';
+    analView.style.display = 'none';
+    tabMatch.classList.add('active');
+    tabAnal.classList.remove('active');
+  } else {
+    matchView.style.display = 'none';
+    analView.style.display = 'block';
+    tabMatch.classList.remove('active');
+    tabAnal.classList.add('active');
+  }
+}
+window.switchView = switchView;
 
 // ─── Particles ─────────────────────────────────────────────────
 function spawnParticles() {
@@ -81,10 +163,10 @@ function renderHeader() {
 
   const chips = document.getElementById('summaryChips');
   chips.innerHTML = `
-    <span class="badge badge-indigo">👥 ${allResults.length} candidates analyzed</span>
+    <span class="badge badge-indigo" onclick="switchView('matching')" style="cursor:pointer">👥 ${allResults.length} candidates analyzed</span>
     <span class="badge badge-emerald">✅ ${readyCount} ready now</span>
     <span class="badge badge-cyan">🏆 Top match: ${topScore}%</span>
-    <span class="badge badge-purple">📊 Avg score: ${avgScore}%</span>
+    <span class="badge badge-purple" onclick="switchView('analytics')" style="cursor:pointer">📊 Avg score: ${avgScore}%</span>
   `;
 
   if (allResults[0]) {
@@ -525,3 +607,6 @@ function renderResults(results) {
     });
   }, 100);
 }
+ 
+ f u n c t i o n   u p d a t e H e a d e r S t a t s ( )   { }  
+ 

@@ -220,6 +220,43 @@
       display: flex; justify-content: space-between;
       font-size: 0.75rem; color: var(--text-secondary); margin-bottom: 4px;
     }
+
+    /* ── Analytics View ── */
+    .view-switcher { display: flex; gap: 4px; background: rgba(255,255,255,0.04); padding: 4px; border-radius: var(--radius-md); margin-bottom: 28px; width: fit-content; }
+    .view-tab { padding: 8px 18px; border-radius: var(--radius-sm); font-size: 0.82rem; font-weight: 600; cursor: pointer; color: var(--text-secondary); transition: var(--transition); }
+    .view-tab:hover { color: var(--text-primary); }
+    .view-tab.active { background: var(--bg-card); color: var(--indigo-light); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+
+    .analytics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; margin-bottom: 32px; }
+    .coverage-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; transition: var(--transition); border-top: 3px solid transparent; }
+    .coverage-card.risk-critical { border-top-color: var(--rose); }
+    .coverage-card.risk-thin { border-top-color: var(--amber); }
+    .coverage-card.risk-healthy { border-top-color: var(--emerald); }
+    
+    .coverage-skill { font-size: 0.85rem; font-weight: 700; margin-bottom: 12px; }
+    .coverage-stat { display: flex; align-items: baseline; gap: 4px; }
+    .coverage-val { font-size: 1.25rem; font-weight: 800; }
+    .coverage-label { font-size: 0.7rem; color: var(--text-muted); }
+    
+    .risk-banner { font-size: 0.72rem; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--border); }
+    .risk-banner.critical { color: var(--rose); }
+    .risk-banner.thin { color: var(--amber); }
+
+    .insight-section { margin-bottom: 40px; }
+    .insight-title { font-size: 1rem; font-weight: 800; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+    
+    .spof-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+    .spof-card { background: rgba(244,63,94,0.05); border: 1px solid rgba(244,63,94,0.15); border-radius: var(--radius-md); padding: 14px 18px; display: flex; justify-content: space-between; align-items: center; }
+    .spof-skill { font-weight: 700; color: var(--rose); }
+    .spof-emp { font-size: 0.8rem; color: var(--text-secondary); }
+
+    .rec-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+    .rec-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; }
+    .rec-tag { font-size: 0.65rem; padding: 3px 8px; border-radius: 4px; font-weight: 800; text-transform: uppercase; margin-bottom: 10px; display: inline-block; }
+    .rec-tag.hire { background: var(--indigo); color: white; }
+    .rec-tag.train { background: var(--emerald); color: white; }
+    .rec-skill { font-weight: 700; margin-bottom: 8px; font-size: 0.95rem; }
+    .rec-reason { font-size: 0.78rem; color: var(--text-secondary); line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -304,18 +341,26 @@
 
       <!-- Candidate Results -->
       <main class="results-main">
-        <div class="results-controls">
-          <span style="font-size:0.82rem;color:var(--text-secondary);font-weight:600;">Sort by:</span>
-          <select class="sort-select" id="sortSelect">
-            <option value="score">Match Score (high → low)</option>
-            <option value="experience">Experience (high → low)</option>
-            <option value="gaps">Fewest Gaps</option>
-            <option value="readiness">Readiness (fastest)</option>
-          </select>
-          <div class="count-display" id="countDisplay"></div>
+        <div class="view-switcher">
+          <div class="view-tab active" id="tabMatch" onclick="switchView('matching')">🎯 Matching Engine</div>
+          <div class="view-tab" id="tabAnalytics" onclick="switchView('analytics')">📊 Workforce Insights</div>
         </div>
 
-        <div id="candidateList"></div>
+        <div id="matchingView">
+          <div class="results-controls">
+            <span style="font-size:0.82rem;color:var(--text-secondary);font-weight:600;">Sort by:</span>
+            <select class="sort-select" id="sortSelect">
+              <option value="score">Match Score (high → low)</option>
+              <option value="experience">Experience (high → low)</option>
+              <option value="gaps">Fewest Gaps</option>
+              <option value="readiness">Readiness (fastest)</option>
+            </select>
+            <div class="count-display" id="countDisplay"></div>
+          </div>
+          <div id="candidateList"></div>
+        </div>
+
+        <div id="analyticsView" style="display:none;"></div>
       </main>
     </div>
 
@@ -336,6 +381,7 @@
 
   <script src="js/data.js"></script>
   <script src="js/gap_dna.js"></script>
+  <script src="js/analytics.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/engine.js"></script>
   <script src="js/results.js"></script>
