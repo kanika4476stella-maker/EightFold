@@ -607,6 +607,5 @@ function renderResults(results) {
     });
   }, 100);
 }
- 
- f u n c t i o n   u p d a t e H e a d e r S t a t s ( )   { }  
- 
+
+function updateHeaderStats() {}
