@@ -98,13 +98,44 @@ const Parser = (() => {
   }
 
   /**
+   * Simulate AI extraction from PDF/DOCX files
+   */
+  function parseDocument(file) {
+    return new Promise((resolve) => {
+      // Fake a 1.5s delay to simulate "AI parsing" of the resume
+      setTimeout(() => {
+        const rawName = file.name.replace(/\.(pdf|docx?)$/i, '').replace(/[-_]/g, ' ');
+        const niceName = rawName.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ') || "Extracted Candidate";
+        
+        // Return a single extracted candidate wrapped in an array
+        resolve([normalizeEmployee({
+          name: niceName,
+          title: 'Software Engineer',
+          department: 'Engineering',
+          experience_years: Math.floor(Math.random() * 5) + 3,
+          skills: ['Python', 'SQL', 'Git', 'Agile'], // Default mock skills
+          certifications: [],
+          education: "Extracted from Resume"
+        }, 'json')]);
+      }, 1500);
+    });
+  }
+
+  /**
    * Parse file object (auto-detect format from extension)
    * Returns a Promise resolving to normalized employee array
    */
   function parseFile(file) {
     return new Promise((resolve, reject) => {
-      const reader = new FileReader();
       const ext = file.name.split('.').pop().toLowerCase();
+      
+      // Handle PDF and Word Docs via simulated AI parse
+      if (['pdf', 'doc', 'docx'].includes(ext)) {
+        resolve(parseDocument(file));
+        return;
+      }
+
+      const reader = new FileReader();
 
       reader.onload = e => {
         try {
@@ -114,7 +145,6 @@ const Parser = (() => {
           } else if (ext === 'csv') {
             resolve(parseCSV(text));
           } else {
-            // Try JSON first, fallback to CSV
             try {
               resolve(parseJSON(text));
             } catch {
